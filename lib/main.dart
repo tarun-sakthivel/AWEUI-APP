@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:carouseleffect/carousel.dart';
+import 'package:carouseleffect/Screens/Obboardingpage.dart';
+import 'package:carouseleffect/Screens/carousel.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -18,8 +18,8 @@ class MainApp extends StatelessWidget {
       // Enable scrolling on desktop via mouse drag for the whole app.
       scrollBehavior: AppScrollBehavior(),
       theme: ThemeData.light().copyWith(
-          scaffoldBackgroundColor: Color.fromARGB(255, 255, 255, 255)),
-      home: MainScreen(),
+          scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255)),
+      home: const Onboardingpage(),
     );
   }
 }
@@ -35,6 +35,8 @@ class AppScrollBehavior extends ScrollBehavior {
 }
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -51,6 +53,16 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Onboardingpage()));
+              },
+              icon: Icon(Icons.navigate_before))
+        ],
+      ),
       body: Stack(
         children: [
           _buildOffstageNavigator(0),
@@ -59,25 +71,34 @@ class _MainScreenState extends State<MainScreen> {
           _buildOffstageNavigator(3),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Color.fromARGB(255, 95, 95, 95),
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Settings'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_box_sharp), label: 'Accounts'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.help_outline_sharp), label: 'Help'),
-        ],
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: BottomNavigationBar(
+              landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+              backgroundColor: Color.fromARGB(255, 0, 0, 0),
+              selectedItemColor: Colors.black,
+              unselectedItemColor: const Color.fromARGB(255, 95, 95, 95),
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              items: const [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.settings), label: 'Settings'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.account_box_sharp), label: 'Accounts'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.help_outline_sharp), label: 'Help'),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -99,13 +120,13 @@ class _MainScreenState extends State<MainScreen> {
   Widget _getScreen(int index) {
     switch (index) {
       case 0:
-        return CoverFlowCarouselPage();
+        return const CoverFlowCarouselPage();
       case 1:
-        return SettingsScreen();
+        return const SettingsScreen();
       case 2:
-        return HomeScreen();
+        return const HomeScreen();
       case 3:
-        return SettingsScreen();
+        return const SettingsScreen();
       default:
         return Container();
     }
@@ -113,21 +134,25 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home')),
-      body: Center(child: Text('Home Screen')),
+      appBar: AppBar(title: const Text('Home')),
+      body: const Center(child: Text('Home Screen')),
     );
   }
 }
 
 class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Settings')),
-      body: Center(child: Text('Settings Screen')),
+      appBar: AppBar(title: const Text('Settings')),
+      body: const Center(child: Text('Settings Screen')),
     );
   }
 }

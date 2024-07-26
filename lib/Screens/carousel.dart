@@ -57,7 +57,7 @@ class _CoverFlowCarouselPageState extends State<CoverFlowCarouselPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('Home'),
+        title: const Text('Home'),
         centerTitle: true,
       ),
       body: Center(
