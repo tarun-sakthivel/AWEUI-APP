@@ -1,4 +1,10 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:carouseleffect/Screens/Obboardingpage.dart';
+import 'package:carouseleffect/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rive/rive.dart';
+import 'package:flutter/widgets.dart' as flutter;
 
 class CoverFlowCarouselPage extends StatefulWidget {
   const CoverFlowCarouselPage({super.key});
@@ -28,6 +34,15 @@ class _CoverFlowCarouselPageState extends State<CoverFlowCarouselPage> {
     'assets/Walpaper1.jpg',
     'assets/Walpaper3.jpg',
   ];
+  bool isLightTheme = false;
+  late SMITrigger lightTheme;
+  late SMITrigger dartTheme;
+  StateMachineController getRiveController(Artboard artboard) {
+    StateMachineController? controller =
+        StateMachineController.fromArtboard(artboard, "State Machine 1");
+    artboard.addController(controller!);
+    return controller!;
+  }
 
   @override
   void initState() {
@@ -55,13 +70,20 @@ class _CoverFlowCarouselPageState extends State<CoverFlowCarouselPage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     return Scaffold(
+      backgroundColor:
+          isLightTheme ? Klightbackgroundcolor : Kdartbackgroundcolor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text('Home'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: SizedBox(
+          backgroundColor: Colors.white,
+          title: const Text('Home'),
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Onboardingpage()));
+              },
+              icon: Icon(Icons.navigate_before))),
+      body: Column(children: [
+        SizedBox(
           height: _maxHeight,
           child: Stack(
             alignment: Alignment.center,
@@ -92,7 +114,72 @@ class _CoverFlowCarouselPageState extends State<CoverFlowCarouselPage> {
             ],
           ),
         ),
-      ),
+        Center(
+          child: Container(
+            child: AnimatedTextKit(
+              isRepeatingAnimation: true,
+              repeatForever: true,
+              animatedTexts: [
+                TyperAnimatedText(
+                    speed: Duration(microseconds: 80),
+                    "Above ",
+                    textStyle: GoogleFonts.kalnia(fontSize: 24)),
+                TyperAnimatedText(
+                    speed: Duration(microseconds: 80),
+                    "shown ",
+                    textStyle: GoogleFonts.kalnia(fontSize: 24)),
+                TyperAnimatedText(
+                    speed: Duration(microseconds: 80),
+                    "is ",
+                    textStyle: GoogleFonts.kalnia(fontSize: 24)),
+                TyperAnimatedText(
+                    speed: Duration(microseconds: 80),
+                    " the ",
+                    textStyle: GoogleFonts.kalnia(fontSize: 24)),
+                TyperAnimatedText(
+                    speed: Duration(microseconds: 80),
+                    "carousel ",
+                    textStyle: GoogleFonts.kalnia(fontSize: 24)),
+                TyperAnimatedText(
+                    speed: Duration(microseconds: 80),
+                    "effect",
+                    textStyle: GoogleFonts.kalnia(fontSize: 24)),
+              ],
+            ),
+          ),
+        ),
+        GestureDetector(
+          onDoubleTap: () {},
+          onTap: () {
+            setState(() {
+              if (isLightTheme) {
+                //true
+                // Update with your light background color
+                lightTheme.fire();
+                // Trigger the light theme animation
+              } else {
+                //false
+                // Update with your dark background color
+                dartTheme.fire(); // Trigger the dark theme animation
+              }
+              isLightTheme = !isLightTheme;
+              // Toggle the theme state
+            });
+          },
+          child: Container(
+            height: 160,
+            width: 220,
+            child: RiveAnimation.asset(
+              "assets/Riveassets/Theme.riv",
+              onInit: (artboard) {
+                StateMachineController controller = getRiveController(artboard);
+                lightTheme = controller.findSMI("Day Mode") as SMITrigger;
+                dartTheme = controller.findSMI("Night Mode") as SMITrigger;
+              },
+            ),
+          ),
+        )
+      ]),
     );
   }
 }
@@ -138,13 +225,17 @@ class _CoverFlowPositionedItem extends StatelessWidget {
         scale: _getScaleValue,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: SizedBox(
-            width: _calculateItemWidth,
-            height: size.height,
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-            ),
+          child: Column(
+            children: [
+              SizedBox(
+                width: _calculateItemWidth,
+                height: size.height,
+                child: flutter.Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
           ),
         ),
       ),

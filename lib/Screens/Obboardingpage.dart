@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:carouseleffect/Screens/carousel.dart';
 import 'package:carouseleffect/Screens/loginpage.dart';
+import 'package:carouseleffect/constants.dart';
 import 'package:carouseleffect/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -52,34 +54,42 @@ class _OnboardingpageState extends State<Onboardingpage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       width: 260,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "Learn design & code",
-                            style: TextStyle(
-                                fontSize: 60,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "Poppins",
-                                height: 1.2),
-                          ),
-                          SizedBox(
-                            height: 40,
-                          ),
-                          Text(
-                            'This is the app with rive animations and carousel slider in the home page. This app exibits the different types animations.',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                height: 1.2,
-                                color: Color.fromARGB(255, 0, 0, 0)),
-                          ),
+                          AnimatedTextKit(
+                              repeatForever: true,
+                              isRepeatingAnimation: true,
+                              animatedTexts: [
+                                TyperAnimatedText(
+                                    "Learn design & code with joy",
+                                    textStyle: Ksecondarytext.copyWith(
+                                        fontSize: 60,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: "Poppins",
+                                        height: 1.2),
+                                    speed: Duration(milliseconds: 180)),
+                              ]),
                         ],
                       ),
                     ),
                     const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'This is the app with rive animations and carousel slider in the home page. This app exibits the different types animations.',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            height: 1.2,
+                            color: Color.fromARGB(255, 0, 0, 0)),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Padding(
@@ -103,14 +113,33 @@ class _OnboardingpageState extends State<Onboardingpage> {
                                   "assets/Riveassets/button.riv",
                                   controllers: [_btnAnimationController],
                                 ),
-                                const Positioned.fill(
+                                Positioned.fill(
                                     child: Row(
                                   children: [
                                     SizedBox(
                                       width: 30,
                                     ),
                                     Icon(Icons.arrow_right_alt),
-                                    Text("Click to view the design")
+                                    AnimatedTextKit(
+                                        pause: Duration(milliseconds: 0),
+                                        isRepeatingAnimation: true,
+                                        repeatForever: true,
+                                        animatedTexts: [
+                                          ColorizeAnimatedText(
+                                              textDirection: TextDirection.ltr,
+                                              speed:
+                                                  Duration(milliseconds: 100),
+                                              "Click to view the design",
+                                              textStyle:
+                                                  Ksecondarytext.copyWith(
+                                                      fontSize: 16),
+                                              colors: [
+                                                Colors.black,
+                                                Colors.red,
+                                                Colors.yellow,
+                                                Colors.green,
+                                              ]),
+                                        ])
                                   ],
                                 ))
                               ],

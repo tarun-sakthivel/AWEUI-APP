@@ -2,7 +2,12 @@ import 'dart:ui';
 
 import 'package:carouseleffect/Screens/Obboardingpage.dart';
 import 'package:carouseleffect/Screens/carousel.dart';
+import 'package:carouseleffect/Screens/loginpage.dart';
+import 'package:carouseleffect/Utils/Riveassets.dart';
+import 'package:carouseleffect/Utils/animatedBar.dart';
+import 'package:carouseleffect/Utils/rive_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:rive/rive.dart';
 
 void main() {
   runApp(const MainApp());
@@ -43,58 +48,98 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  late SMIBool searchTrigger;
+  RiveAsset selectedBottomNav = bottomNavs.first;
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Onboardingpage()));
-              },
-              icon: Icon(Icons.navigate_before))
-        ],
-      ),
       body: Stack(
         children: [
           _buildOffstageNavigator(0),
           _buildOffstageNavigator(1),
           _buildOffstageNavigator(2),
           _buildOffstageNavigator(3),
+          _buildOffstageNavigator(4),
         ],
       ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: BottomNavigationBar(
-              landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-              backgroundColor: Color.fromARGB(255, 0, 0, 0),
-              selectedItemColor: Colors.black,
-              unselectedItemColor: const Color.fromARGB(255, 95, 95, 95),
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
+      appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const Text('Home'),
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Onboardingpage()));
               },
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.settings), label: 'Settings'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.account_box_sharp), label: 'Accounts'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.help_outline_sharp), label: 'Help'),
+              icon: Icon(Icons.navigate_before))),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.symmetric(horizontal: 22),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 73, 94, 105).withOpacity(0.8),
+              borderRadius: const BorderRadius.all(Radius.circular(24)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ...List.generate(
+                  bottomNavs.length,
+                  (index) => GestureDetector(
+                    onTap: () {
+                      bottomNavs[index].input!.change(true);
+                      if (bottomNavs[index] != selectedBottomNav) {
+                        setState(() {
+                          _currentIndex = index;
+                          selectedBottomNav = bottomNavs[index];
+                        });
+                      }
+
+                      Future.delayed(const Duration(seconds: 1), () {
+                        bottomNavs[index].input!.change(false);
+                      });
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedBar(
+                            isActive: bottomNavs[index] == selectedBottomNav),
+                        SizedBox(
+                          height: 36,
+                          width: 36,
+                          child: Opacity(
+                            //This function helps you to set the opacity of the sub widget.
+                            opacity: bottomNavs[index] == selectedBottomNav
+                                ? 1
+                                : 0.5,
+                            child: RiveAnimation.asset(
+                              bottomNavs.first.src,
+                              artboard: bottomNavs[index].artboard,
+                              onInit: (artboard) {
+                                StateMachineController controller =
+                                    RiveUtils.getRiveController(artboard,
+                                        stateMachineName:
+                                            bottomNavs[index].stateMachineName);
+
+                                bottomNavs[index].input =
+                                    controller.findSMI("active") as SMIBool;
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -120,39 +165,27 @@ class _MainScreenState extends State<MainScreen> {
   Widget _getScreen(int index) {
     switch (index) {
       case 0:
-        return const CoverFlowCarouselPage();
+        return CoverFlowCarouselPage();
       case 1:
-        return const SettingsScreen();
+        return SettingsScreen();
       case 2:
-        return const HomeScreen();
+        return SettingsScreen();
       case 3:
-        return const SettingsScreen();
+        return SettingsScreen();
+      case 4:
+        return SettingsScreen();
       default:
         return Container();
     }
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: const Center(child: Text('Home Screen')),
-    );
-  }
-}
-
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      body: const Center(child: Text('Settings Screen')),
+      appBar: AppBar(title: Text('Settings')),
+      body: Center(child: Text('Settings Screen')),
     );
   }
 }
